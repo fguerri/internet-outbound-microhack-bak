@@ -71,11 +71,13 @@ To start the Terraform deployment, follow the steps listed below:
 
 - Verify that your VNet Peering and Site-to-site VPN are functioning as expected: From the "wvd-workstation" VM, access the on-prem Linux box via SSH (IP address: 10.57.2.4).
 
+  > Please note that "ssh" is available in the Windows 10 Command Prompt. You can also install Putty or your favorite SSH client.
+
 ## :checkered_flag: Results
 
 - You have deployed a basic Azure and On-Premises environment using a Terraform template
 - You have become familiar with the components you have deployed in your subscription
-- You are now be able to login to all VMs using your specified credentials
+- You are now able to login to all VMs using your specified credentials
 - End-to-end network connectivity has been verified from On-Premises to Azure
 
 Now that we have the base lab deployed, we can progress to the MicroHack challenges!
@@ -106,7 +108,7 @@ Verify that internet access from the wvd-workstation is now controlled by Contos
 
 ![image](images/invalid-cert.png)
 
-In order to access the internet via Contoso's on-prem proxy, you must configure the wvd-workstation to trust the cerficates issued by the proxy, which we will do in the next task.
+In order to access the internet via Contoso's on-prem proxy, you must configure the wvd-workstation to trust the certificates issued by the proxy, which we will do in the next task.
 
 ## Task 2: Access the internet via on-prem proxy
 
@@ -131,7 +133,7 @@ As a Contoso employee, you are willing to trust Contoso's Enterprise CA, which y
 
 > In real-world scenarios, certificates can be automatically distributed to workstations using configuration management tools (for example, certificates can be distribute to domain-joined computers by means of Windows Server AD GPOs). 
 
-- In Microsoft Edge, click the reload button and verify that you can now access https://ipinfo.io
+- Close Microsoft Edge, launch it again and verify that you can now access https://ipinfo.io
 - Verify that the public IP you're using to access the internet is now the proxy's public IP
 
 ![image](images/confirm-public-ip.png)
@@ -164,11 +166,17 @@ In the Azure Portal, deploy a new Azure Firewall instance in the hub-vnet. A sub
 
 ![image](images/firewall.png)
 
-When the deployment completes, go to the new firewall's overview tile a take note of its *private* IP address. This IP address will become the default gateway for Contoso's Azure VNets. 
+> Please note that the "Forced tunneling" switch must be disabled. The switch allows forwarding internet traffic to custom next hops (including gateways connected to remote networks) after it has been inspected by Azure Firewall. In this scenario, you are using Azure Firewall as your secure internet edge and want your internet traffic to egress to the internet directly, after being inspected by Azure Firewall.
+
+Your Azure Firewall instance will take about 10 minutes to deploy. When the deployment completes, go to the new firewall's overview tile a take note of its *private* IP address. This IP address will become the default gateway for Contoso's Azure VNets. 
 
 ## Task 2: Configure a default route via azure Firewall
 
-In the Azure portal, go to the Route Table "wvd-spoke-rt" and modify the next hop of the default route that you defined in the previous challenge. Replace the next hop "Virtual Network Gateway" with the private IP of your Azure firewall instance.
+In the Azure portal, go to your Azure Firewall instance's "Overview" and take note of its private IP address:
+
+![image](images/firewall-overview.png)
+
+Go to the Route Table "wvd-spoke-rt" and modify the next hop of the default route that you defined in the previous challenge. To do so, click on “Routes” on the menu on the left, find the custom default route that you defined in the previous challenge and click on it. Replace the next hop "Virtual Network Gateway" with the private IP of your Azure firewall instance. 
 
 ![image](images/default-via-azfw.png)
 
@@ -218,12 +226,12 @@ To implement this policy, go to the "scripts/" directory and execute the wvd-fir
   `cd internet-outbound/scripts`
 
   `./wvd-firewall-rules.ps1 -AzFwName <your Azure Firewall name>`
-  
-When done, go to your Azure Firewall configuration in the portal and verify that you have two rule colletions (one network rule collection, one application rule collection) that allow access to the endpoints listed in the previous figure.
+
+When done, go to your Azure Firewall configuration in the portal and verify that you have two rule collections (one network rule collection, one application rule collection) that allow access to the endpoints listed in the previous figure.
 
 ## :checkered_flag: Results
 
-When the new rules are applied, verify that you can access any site in the microsoft.com domain from the wvd-workstation. Browse to https://ipinfo.io and verify that your public IP address has changed again. In the Azure portal, confirm that your address corresponds to your Azure Firewall instance's public IP.  
+When the new rules are applied, verify that you can access https://docs.microsoft.com from the wvd-workstation. Browse to https://ipinfo.io and verify that your public IP address has changed again. In the Azure portal, confirm that your address corresponds to your Azure Firewall instance's public IP.  
 
 # Challenge 3: Add a proxy solution
 
