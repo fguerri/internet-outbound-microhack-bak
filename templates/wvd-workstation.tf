@@ -30,14 +30,14 @@ resource "azurerm_windows_virtual_machine" "wvd-workstation" {
   name                      = "wvd-workstation"
   resource_group_name       = azurerm_resource_group.internet-outbound-microhack-rg.name
   location                  = azurerm_resource_group.internet-outbound-microhack-rg.location
-  size                      = "Standard_A2"
+  size                      = "Standard_D2_v3"
   admin_username            = "adminuser"
   admin_password            = var.admin_password
   network_interface_ids     = [azurerm_network_interface.wvd-workstation-nic.id]
 
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = "StandardSSD_LRS"
   }
 
   source_image_reference {
