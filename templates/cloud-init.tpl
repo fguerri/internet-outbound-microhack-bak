@@ -45,7 +45,7 @@ runcmd:
   - curl https://raw.githubusercontent.com/fguerri/internet-outbound-microhack/main/config-files/squid.conf --output /etc/squid/squid.conf
   - curl https://raw.githubusercontent.com/fguerri/internet-outbound-microhack/main/config-files/contoso-urls.conf --output /etc/squid/contoso-urls.conf
   - curl https://raw.githubusercontent.com/fguerri/internet-outbound-microhack/main/config-files/O365-urls.conf --output /etc/squid/O365-urls.conf
-  - curl https://raw.githubusercontent.com/fguerri/internet-outbound-microhack/main/config-files/ERR_ACCESS_DENIED --output /usr/share/squid/errors/en/ERR_ACCESS_DENIED
+  - curl https://raw.githubusercontent.com/fguerri/internet-outbound-microhack/main/config-files/access-denied.htm --output /var/www/html/access-denied.htm
   - mkdir /etc/squid/ssl_certs
   - chown squid:squid /etc/squid/ssl_certs
   - chmod 700 /etc/squid/ssl_certs
